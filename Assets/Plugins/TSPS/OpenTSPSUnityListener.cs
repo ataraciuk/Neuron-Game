@@ -38,7 +38,14 @@ public class OpenTSPSUnityListener : MonoBehaviour  {
 	private float torsoYBeginning = -1.0f;
 	private float l_hip = -1.0f;
 	private float r_hip = -1.0f;
+	private float l_knee = -1.0f;
+	private float r_knee = -1.0f;
+	private float torso = -1.0f;
+	private float jumpCalibrated = -1.0f;
 	private float hipCalibrated = -1.0f;
+	private float neck = -1.0f;
+	private int consecutiveIncreases = 0;
+	private int jumpThreshold = 10;
 	
 	public void OnEnable(){
 		UnityOSCReceiver.OSCMessageReceived += new UnityOSCReceiver.OSCMessageReceivedHandler(OSCMessageReceived);
@@ -58,31 +65,48 @@ public class OpenTSPSUnityListener : MonoBehaviour  {
 			BroadcastMessage("HipsMoved", diff - hipCalibrated, SendMessageOptions.DontRequireReceiver);
 			hipCalibrated = diff;
 		}
+		if(torso >= 0.0f) {
+			if(jumpCalibrated < 0.0f) {
+				jumpCalibrated = torso;
+			}
+			BroadcastMessage("TorsoMoved", jumpCalibrated - torso, SendMessageOptions.DontRequireReceiver);
+			jumpCalibrated = torso;
+		}
+		if(l_knee >= 0.0f && r_knee >= 0.0f && neck >= 0.0f) {
+			BroadcastMessage("UpdateJumpThreshold", (l_knee + r_knee) / 2 - neck, SendMessageOptions.DontRequireReceiver);
+		}
 	}
 	
 	public void OSCMessageReceived(OSC.NET.OSCMessage message){
 		
 		string address = message.Address;
 		ArrayList args = message.Values;
-		if(address.StartsWith("/joint") && args[0].ToString() == "torso") {
+		if(address.StartsWith("/joint") && args[0].ToString() == "torso") {/*
 			if (torsoXBeginning == -1.0f) {
 				torsoXBeginning = (float)args[2];
 			}
 			if (torsoYBeginning == -1.0f) {
 				torsoYBeginning = (float)args[3];
 			}
-			BroadcastMessage("TorsoMoved", new Vector3(
-				((float)args[2] - torsoXBeginning),
-				(torsoYBeginning - (float)args[3]),
-				0), SendMessageOptions.DontRequireReceiver);
+			BroadcastMessage("TorsoMoved", torsoYBeginning - (float)args[3], SendMessageOptions.DontRequireReceiver);
 			torsoXBeginning = (float)args[2];
-			torsoYBeginning = (float)args[3];
+			torsoYBeginning = (float)args[3];*/
+			torso = (float)args[3];
 		}
 		if(address.StartsWith("/joint") && args[0].ToString() == "l_hip") {
 			l_hip = (float)args[2];
 		}
 		if(address.StartsWith("/joint") && args[0].ToString() == "r_hip") {
 			r_hip = (float)args[2];
+		}
+		if(address.StartsWith("/joint") && args[0].ToString() == "l_knee") {
+			l_knee = (float)args[3];
+		}
+		if(address.StartsWith("/joint") && args[0].ToString() == "r_knee") {
+			r_knee = (float)args[3];
+		}
+		if(address.StartsWith("/joint") && args[0].ToString() == "neck") {
+			neck = (float)args[3];
 		}
 		//Debug.Log("mouth width: "+mouthWidth+"    mouth height: "+mouthHeight);
 	}
