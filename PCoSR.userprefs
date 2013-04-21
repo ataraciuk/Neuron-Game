@@ -4,15 +4,8 @@
     <Files>
       <File FileName="Assets/Plugins/OSC.NET/UnityOSCReceiver.cs" Line="1" Column="1" />
       <File FileName="Assets/Plugins/TSPS/OpenTSPSUnityListener.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/OSC.NET/jsOSCReceiver.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Move.cs" Line="37" Column="4" />
-      <File FileName="Assets/Scripts/CollisionLargeBdnf.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/CollisionSmallBdnf1.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/CollisionInhib.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/OSC.NET/jsOSCBundle.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/OSC.NET/jsOSCTransmitter.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/TSPS/OpenTSPSPerson.cs" Line="1" Column="1" />
-      <File FileName="Assets/Plugins/radical/System/Curves.cs" Line="132" Column="31" />
+      <File FileName="Assets/Scripts/Move.cs" Line="70" Column="135" />
+      <File FileName="Assets/Plugins/radical/System/Curves.cs" Line="1" Column="1" />
       <File FileName="Assets/Plugins/radical/System/Easing.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
