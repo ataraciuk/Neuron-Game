@@ -52,6 +52,8 @@
      <Compile Include="Assets\Plugins\OSC.NET\jsOSCTransmitter.cs" />
      <Compile Include="Assets\Plugins\TSPS\OpenTSPSPerson.cs" />
      <Compile Include="Assets\Plugins\TSPS\OpenTSPSUnityListener.cs" />
+     <Compile Include="Assets\Plugins\radical\System\Curves.cs" />
+     <Compile Include="Assets\Plugins\radical\System\Easing.cs" />
      <Compile Include="Assets\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />
      <Compile Include="Assets\Standard Assets\Scripts\General Scripts\ActivateTrigger.cs" />
      <Compile Include="Assets\Standard Assets\Scripts\Utility Scripts\CombineChildren.cs" />
