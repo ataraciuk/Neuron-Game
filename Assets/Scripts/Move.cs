@@ -6,8 +6,7 @@ using System.Linq;
 public class Move : MonoBehaviour {
 	
 	private Vector3 Speed = Vector3.forward / 5;
-	private Vector3 startPos;
-	private float hipsZMultiplier = 0.2f;
+	private float hipsZMultiplier = 0.6f;
 	private float torsoYMultiplier = 50.0f;
 	private float alpha = 0.4f;
 	private List<float> speeds = new List<float>();
@@ -36,7 +35,6 @@ public class Move : MonoBehaviour {
 		
 	// Use this for initialization
 	void Start () {
-		startPos = this.transform.position;
 		for(int i = 0; i < sampleBufferSize; i++) {
 			speeds.Add(0.0f);
 			velocities.Add(0.0f);
@@ -62,12 +60,12 @@ public class Move : MonoBehaviour {
 		};
 		path = path.Select(x => x * 0.1f).ToArray();
 		thePath = Interpolate.NewCatmullRom(path, 1000, false);
-		this.transform.position = path[0];
+		this.transform.parent.transform.position = path[0];
 		Instantiate(BDNF, CRSpline.InterpConstantSpeed(thePath.ToArray(), firstBDNFPath),Quaternion.identity);
 		Instantiate(BDNF, CRSpline.InterpConstantSpeed(thePath.ToArray(), lastBDNFPath),Quaternion.identity);
 		var spread = (lastBDNFPath - firstBDNFPath) / BDNFAmount;
 		for(int i = 1; i <= BDNFAmount - 2; i++) {
-			Instantiate(BDNF, CRSpline.InterpConstantSpeed(thePath.ToArray(), firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.6f), Quaternion.identity);
+			Instantiate(BDNF, CRSpline.InterpConstantSpeed(thePath.ToArray(), firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.7f), Quaternion.identity);
 		}
 	}
 	
@@ -100,9 +98,14 @@ public class Move : MonoBehaviour {
 		float mappedSpeed = Mathf.Log(1+ (speeds.Average() - Mathf.Abs(velocities.Average())));
 		this.pathCompletion += mappedSpeed * hipsZMultiplier;
 		pathCompletion = Mathf.Min(pathCompletion, 1.0f);
-		Debug.Log(pathCompletion);
-		this.transform.position += CRSpline.InterpConstantSpeed(thePath.ToArray(), pathCompletion) - this.transform.position;
-		//this.transform.position += new Vector3(0, /*torsoPos.y * torsoYMultiplier*/ 0, mappedSpeed * hipsZMultiplier);
+		//iTween.PutOnPath(this.gameObject, thePath.ToArray(), pathCompletion); //TODO Cache this
+		var toMove = CRSpline.InterpConstantSpeed(thePath.ToArray(), pathCompletion) - this.transform.parent.transform.position;
+		Debug.Log(toMove.normalized);
+		Quaternion rotation = new Quaternion();
+		rotation.SetLookRotation(toMove);
+		this.transform.parent.transform.localRotation = rotation;
+		this.transform.parent.transform.position += toMove;
+		
 	}
 	
 	void UpdateJumpThreshold(float val){
@@ -114,8 +117,8 @@ public class Move : MonoBehaviour {
 		if(!jumping) {
 			Debug.Log("JUMP!");
 			jumping = true;
-			iTween.MoveBy(this.gameObject, iTween.Hash(
-				"amount", Vector3.up * jumpHeight,
+			iTween.MoveAdd(this.gameObject, iTween.Hash(
+				"amount", Vector3.up * jumpHeight, //Vector3.up
 				"time", jumpTime,
 				"easetype", iTween.EaseType.easeOutQuad,
 				"oncomplete", "Fall",
@@ -125,7 +128,7 @@ public class Move : MonoBehaviour {
 	}
 	
 	void Fall() {
-		iTween.MoveBy(this.gameObject, iTween.Hash(
+		iTween.MoveAdd(this.gameObject, iTween.Hash(
 			"amount", Vector3.down * jumpHeight,
 			"time", jumpTime,
 			"easetype", iTween.EaseType.easeInQuad,
