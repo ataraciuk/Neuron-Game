@@ -8,19 +8,10 @@ public class Move : MonoBehaviour {
 	private Vector3 Speed = Vector3.forward / 5;
 	private float hipsZMultiplier = 0.6f;
 	private float torsoYMultiplier = 50.0f;
-	private float alpha = 0.4f;
-	private List<float> speeds = new List<float>();
-	private List<float> velocities = new List<float>();
-	private int sampleBufferSize = 80;
-	private List<float> torsoPos = new List<float>();
-	private int jumpLongBufferSize = 5;
-	private int jumpBufferSize = 5;
-	private float jumpThreshold = -1.0f;
 	private float jumpMult = 0.15f;
 	private bool jumping = false;
 	private float jumpHeight = 7.0f;
 	private float jumpTime = 0.2f;
-	private float jumpingSpeed = 0.0f;
 	private float endJumpTime = 0.0f;
 	private bool endedJump = false;
 	
@@ -32,16 +23,12 @@ public class Move : MonoBehaviour {
 	private int BDNFAmount = 10;
 	private float firstBDNFPath = 0.05f;
 	private float lastBDNFPath = 0.95f;
+	private float BDNFHeight = 8.0f;
+	
+	public IDictionary<int, UserMovement> users = new Dictionary<int, UserMovement>();
 		
 	// Use this for initialization
 	void Start () {
-		for(int i = 0; i < sampleBufferSize; i++) {
-			speeds.Add(0.0f);
-			velocities.Add(0.0f);
-		}
-		for(int i = 0; i < jumpLongBufferSize; i++) {
-			torsoPos.Add(0.0f);
-		}
 		Vector3[] path = {
 			new Vector3(976.656f, 1160.348f, 57.45f),
 			new Vector3(20.833f,	972.301f,	430.565f),
@@ -61,11 +48,11 @@ public class Move : MonoBehaviour {
 		path = path.Select(x => x * 0.1f).ToArray();
 		thePath = Interpolate.NewCatmullRom(path, 1000, false);
 		this.transform.parent.transform.position = path[0];
-		Instantiate(BDNF, CRSpline.InterpConstantSpeed(thePath.ToArray(), firstBDNFPath),Quaternion.identity);
-		Instantiate(BDNF, CRSpline.InterpConstantSpeed(thePath.ToArray(), lastBDNFPath),Quaternion.identity);
+		PutOnPath(BDNF, firstBDNFPath, Vector3.up * BDNFHeight);
+		PutOnPath(BDNF, lastBDNFPath, Vector3.up * BDNFHeight);
 		var spread = (lastBDNFPath - firstBDNFPath) / BDNFAmount;
 		for(int i = 1; i <= BDNFAmount - 2; i++) {
-			Instantiate(BDNF, CRSpline.InterpConstantSpeed(thePath.ToArray(), firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.7f), Quaternion.identity);
+			PutOnPath(BDNF, firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.7f, Vector3.up * BDNFHeight);
 		}
 	}
 	
@@ -78,39 +65,41 @@ public class Move : MonoBehaviour {
 		//pathCompletion += 0.0001f;
 	}
 	
-	void TorsoMoved(float val) {
-		torsoPos.RemoveAt(0);
-		torsoPos.Add(val);
-		if(jumpThreshold >= 0.0f && torsoPos.Sum() - torsoPos.Skip(sampleBufferSize - jumpBufferSize).Sum() > jumpThreshold * jumpMult) {
+	void TorsoMoved(KeyValuePair<int, float> keypair) {
+		var user = NewOrGet(keypair.Key);
+		user.torsoPos.RemoveAt(0);
+		user.torsoPos.Add(keypair.Value);
+		if(user.jumpThreshold >= 0.0f && user.JumpSum() > user.jumpThreshold * jumpMult) {
 			OnJump();
 		}
 		//this.transform.position += new Vector3(0, val * torsoYMultiplier, 0);
 	}
-	void HipsMoved(float val) {
+	void HipsMoved(KeyValuePair<int, float> keypair) {
+		var user = NewOrGet(keypair.Key);
 		if(!jumping) {
+			var val = keypair.Value;
 			var absx = Mathf.Abs(val);
-			//absx = alpha * absx + (1 - alpha) * backoff;
-			speeds.RemoveAt(0);
-			velocities.RemoveAt(0);
-			speeds.Add(absx);
-			velocities.Add(val);
+			user.speeds.RemoveAt(0);
+			user.velocities.RemoveAt(0);
+			user.speeds.Add(absx);
+			user.velocities.Add(val);
 		}
-		float mappedSpeed = Mathf.Log(1+ (speeds.Average() - Mathf.Abs(velocities.Average())));
+		float mappedSpeed = Mathf.Log(1+ (user.speeds.Average() - Mathf.Abs(user.velocities.Average())));
 		this.pathCompletion += mappedSpeed * hipsZMultiplier;
 		pathCompletion = Mathf.Min(pathCompletion, 1.0f);
 		//iTween.PutOnPath(this.gameObject, thePath.ToArray(), pathCompletion); //TODO Cache this
 		var toMove = CRSpline.InterpConstantSpeed(thePath.ToArray(), pathCompletion) - this.transform.parent.transform.position;
-		Debug.Log(toMove.normalized);
 		Quaternion rotation = new Quaternion();
-		rotation.SetLookRotation(toMove);
-		this.transform.parent.transform.localRotation = rotation;
-		this.transform.parent.transform.position += toMove;
-		
+		if(toMove.magnitude > 0.0f) {
+			rotation.SetLookRotation(toMove);
+			this.transform.parent.transform.localRotation = rotation;
+		}
+		this.transform.parent.transform.position += toMove;	
 	}
 	
-	void UpdateJumpThreshold(float val){
-		//Debug.Log(val);
-		jumpThreshold = val;
+	void UpdateJumpThreshold(KeyValuePair<int, float> keypair){
+		var user = NewOrGet(keypair.Key);
+		user.jumpThreshold = keypair.Value;
 	}
 	
 	void OnJump() {
@@ -140,5 +129,46 @@ public class Move : MonoBehaviour {
 	void FallComplete(){
 		endedJump = true;
 		endJumpTime = Time.fixedTime;
+	}
+	
+	UserMovement NewOrGet(int id){
+		if(!users.ContainsKey(id)) {
+			users.Add(id, new UserMovement());
+		}
+		return users[id];
+	}
+	
+	Object PutOnPath(Transform obj, float pathPercentage, Vector3 offset) {
+		Quaternion rotation = new Quaternion();
+		rotation.SetLookRotation(CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) - CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage * 0.99f));
+		return Instantiate(obj, CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) + offset, rotation);
+	}
+	
+	public void RemoveUser(int id) {
+		users.Remove(id);
+	}
+}
+
+public class UserMovement {
+	public List<float> speeds = new List<float>();
+	public List<float> velocities = new List<float>();
+	public List<float> torsoPos = new List<float>();
+	public float jumpThreshold = -1.0f;
+				
+	public int sampleBufferSize = 80;
+	public int jumpLongBufferSize = 5;
+	
+	public UserMovement(){
+		for(int i = 0; i < sampleBufferSize; i++) {
+			speeds.Add(0.0f);
+			velocities.Add(0.0f);
+		}
+		for(int i = 0; i < jumpLongBufferSize; i++) {
+			torsoPos.Add(0.0f);
+		}
+	}
+	
+	public float JumpSum() {
+		return this.torsoPos.Sum() - this.torsoPos.Skip(this.sampleBufferSize - this.jumpLongBufferSize).Sum();
 	}
 }
