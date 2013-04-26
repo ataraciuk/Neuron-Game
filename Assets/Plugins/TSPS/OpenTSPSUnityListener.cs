@@ -77,6 +77,9 @@ public class OpenTSPSUnityListener : MonoBehaviour  {
 		ArrayList args = message.Values;
 		if(address.StartsWith("/joint")) {
 			var joint = args[0].ToString();
+			if(!Users.ContainsKey((int)args[1])){
+				this.Users.Add((int)args[1], new UserSkeleton());
+			}
 			var user = this.Users[(int)args[1]];
 			if(joint == "torso") user.torso = (float)args[3];
 			else if(joint == "l_hip") user.l_hip = (float)args[2];

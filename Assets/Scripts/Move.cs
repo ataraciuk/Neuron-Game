@@ -6,9 +6,8 @@ using System.Linq;
 public class Move : MonoBehaviour {
 	
 	private Vector3 Speed = Vector3.forward / 5;
-	private float hipsZMultiplier = 0.6f;
+	private float hipsZMultiplier = 0.15f;
 	private float torsoYMultiplier = 50.0f;
-	private float jumpMult = 0.15f;
 	private bool jumping = false;
 	private float jumpHeight = 7.0f;
 	private float jumpTime = 0.2f;
@@ -23,7 +22,7 @@ public class Move : MonoBehaviour {
 	private int BDNFAmount = 10;
 	private float firstBDNFPath = 0.05f;
 	private float lastBDNFPath = 0.95f;
-	private float BDNFHeight = 8.0f;
+	private float BDNFHeight = 9.0f;//8.0f;
 	
 	public IDictionary<int, UserMovement> users = new Dictionary<int, UserMovement>();
 		
@@ -37,15 +36,14 @@ public class Move : MonoBehaviour {
 			new Vector3(-158.563f,	335.323f,	75.834f),
 			new Vector3(714.683f,	274.965f,	-402.153f),
 			new Vector3(-140.179f,	0.0f,	-843.371f),
-			new Vector3(737.663f,	-176.377f,	-1022.617f)/*
-			new Vector3(-930.696f,	0.0f,	176.947f),
-			new Vector3(-930.696f,	0.0f,	176.947f),
-			new Vector3(-930.696f,	0.0f,	176.947f),
-			new Vector3(-930.696f,	0.0f,	176.947f),
-			new Vector3(-930.696f,	0.0f,	176.947f),
-			new Vector3(-930.696f,	0.0f,	176.947f)*/		
+			new Vector3(737.663f,	-176.377f,	-1022.617f),
+			new Vector3(883.723f,	-33.156f,	-685.02f),
+			new Vector3(1559.897f,  118.9f,	-608.974f),
+			new Vector3(1541.968f,	0.0f,	158.764f),
+			new Vector3(549.226f,	0.0f,	-80.431f),
+			new Vector3(-282.656f,	-344.386f,	-719.279f)
 		};
-		path = path.Select(x => x * 0.1f).ToArray();
+		path = path.Select(x => x * 0.2f).ToArray();
 		thePath = Interpolate.NewCatmullRom(path, 1000, false);
 		this.transform.parent.transform.position = path[0];
 		PutOnPath(BDNF, firstBDNFPath, Vector3.up * BDNFHeight);
@@ -69,7 +67,7 @@ public class Move : MonoBehaviour {
 		var user = NewOrGet(keypair.Key);
 		user.torsoPos.RemoveAt(0);
 		user.torsoPos.Add(keypair.Value);
-		if(user.jumpThreshold >= 0.0f && user.JumpSum() > user.jumpThreshold * jumpMult) {
+		if(user.HasToJump()) {
 			OnJump();
 		}
 		//this.transform.position += new Vector3(0, val * torsoYMultiplier, 0);
@@ -146,29 +144,5 @@ public class Move : MonoBehaviour {
 	
 	public void RemoveUser(int id) {
 		users.Remove(id);
-	}
-}
-
-public class UserMovement {
-	public List<float> speeds = new List<float>();
-	public List<float> velocities = new List<float>();
-	public List<float> torsoPos = new List<float>();
-	public float jumpThreshold = -1.0f;
-				
-	public int sampleBufferSize = 80;
-	public int jumpLongBufferSize = 5;
-	
-	public UserMovement(){
-		for(int i = 0; i < sampleBufferSize; i++) {
-			speeds.Add(0.0f);
-			velocities.Add(0.0f);
-		}
-		for(int i = 0; i < jumpLongBufferSize; i++) {
-			torsoPos.Add(0.0f);
-		}
-	}
-	
-	public float JumpSum() {
-		return this.torsoPos.Sum() - this.torsoPos.Skip(this.sampleBufferSize - this.jumpLongBufferSize).Sum();
 	}
 }
