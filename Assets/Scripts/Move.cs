@@ -22,7 +22,7 @@ public class Move : MonoBehaviour {
 	private int BDNFAmount = 10;
 	private float firstBDNFPath = 0.05f;
 	private float lastBDNFPath = 0.95f;
-	private float BDNFHeight = 9.0f;//8.0f;
+	private float BDNFHeight = 8.0f;
 	
 	public IDictionary<int, UserMovement> users = new Dictionary<int, UserMovement>();
 		
