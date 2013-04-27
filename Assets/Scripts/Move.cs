@@ -5,9 +5,7 @@ using System.Linq;
 
 public class Move : MonoBehaviour {
 	
-	private Vector3 Speed = Vector3.forward / 5;
 	private float hipsZMultiplier = 0.15f;
-	private float torsoYMultiplier = 50.0f;
 	private bool jumping = false;
 	private float jumpHeight = 7.0f;
 	private float jumpTime = 0.2f;
@@ -24,7 +22,18 @@ public class Move : MonoBehaviour {
 	private float lastBDNFPath = 0.95f;
 	private float BDNFHeight = 8.0f;
 	
+	private float standingSpeed = 0.0005f;
+	
 	public IDictionary<int, UserMovement> users = new Dictionary<int, UserMovement>();
+	
+	public Transform tubeRing;
+	
+	
+	const int ringAmount = 40;
+	private Transform[] rings = new Transform[ringAmount];
+	private float ringSeparation = 0.01f;
+	private float[] ringOffsets = new float[ringAmount];
+	private int ringToMove = 0;
 		
 	// Use this for initialization
 	void Start () {
@@ -52,6 +61,12 @@ public class Move : MonoBehaviour {
 		for(int i = 1; i <= BDNFAmount - 2; i++) {
 			PutOnPath(BDNF, firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.7f, Vector3.up * BDNFHeight);
 		}
+		for(int i = 0; i < rings.Length; i++){
+			rings[i] = (Transform)PutOnPath(tubeRing, i * ringSeparation + 0.00001f, Vector3.zero);
+			rings[i].Rotate(90, 0, 0);
+			ringOffsets[i] = i * ringSeparation;
+		}
+		//MoveBall();
 	}
 	
 	// Update is called once per frame
@@ -60,7 +75,8 @@ public class Move : MonoBehaviour {
 			jumping = false;
 			endedJump = false;
 		}
-		//pathCompletion += 0.0001f;
+		pathCompletion += standingSpeed;
+		MoveBall();
 	}
 	
 	void TorsoMoved(KeyValuePair<int, float> keypair) {
@@ -86,13 +102,27 @@ public class Move : MonoBehaviour {
 		this.pathCompletion += mappedSpeed * hipsZMultiplier;
 		pathCompletion = Mathf.Min(pathCompletion, 1.0f);
 		//iTween.PutOnPath(this.gameObject, thePath.ToArray(), pathCompletion); //TODO Cache this
+		MoveBall();
+	}
+	
+	void MoveBall() {
 		var toMove = CRSpline.InterpConstantSpeed(thePath.ToArray(), pathCompletion) - this.transform.parent.transform.position;
 		Quaternion rotation = new Quaternion();
 		if(toMove.magnitude > 0.0f) {
 			rotation.SetLookRotation(toMove);
 			this.transform.parent.transform.localRotation = rotation;
 		}
-		this.transform.parent.transform.position += toMove;	
+		this.transform.parent.transform.position += toMove;
+		if(pathCompletion > ringOffsets[ringToMove] + 0.01f){
+			var previous = (ringToMove - 1 + ringAmount) % ringAmount;
+			var nextOffset = ringOffsets[previous] + ringSeparation;
+			if(nextOffset <= 1.0f) {
+				SetOnPath(rings[ringToMove], nextOffset, Vector3.zero);
+				rings[ringToMove].Rotate(90, 0, 0);
+				ringOffsets[ringToMove] = nextOffset;
+				ringToMove = (ringToMove + 1) % ringAmount;
+			}
+		}
 	}
 	
 	void UpdateJumpThreshold(KeyValuePair<int, float> keypair){
@@ -137,9 +167,18 @@ public class Move : MonoBehaviour {
 	}
 	
 	Object PutOnPath(Transform obj, float pathPercentage, Vector3 offset) {
+		pathPercentage = Mathf.Min( Mathf.Max(0.0f, pathPercentage), 0.99f);
 		Quaternion rotation = new Quaternion();
 		rotation.SetLookRotation(CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) - CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage * 0.99f));
 		return Instantiate(obj, CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) + offset, rotation);
+	}
+	
+	void SetOnPath(Transform obj, float pathPercentage, Vector3 offset) {
+		pathPercentage = Mathf.Min( Mathf.Max(0.0f, pathPercentage), 0.99f);
+		Quaternion rotation = new Quaternion();
+		rotation.SetLookRotation(CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) - CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage * 0.99f));
+		obj.position = CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) + offset;
+		obj.rotation = rotation;
 	}
 	
 	public void RemoveUser(int id) {
