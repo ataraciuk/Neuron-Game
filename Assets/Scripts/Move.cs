@@ -27,13 +27,21 @@ public class Move : MonoBehaviour {
 	public IDictionary<int, UserMovement> users = new Dictionary<int, UserMovement>();
 	
 	public Transform tubeRing;
+	public Transform ribosome;
 	
 	
-	const int ringAmount = 40;
+	const int ringAmount = 30;
 	private Transform[] rings = new Transform[ringAmount];
 	private float ringSeparation = 0.01f;
 	private float[] ringOffsets = new float[ringAmount];
 	private int ringToMove = 0;
+	private Transform[] ribosomes = new Transform[ringAmount];
+	private float ribosomeDist = 10.0f;
+	private float ringBeginning = 0.0001f;
+	
+	private List<Vector3> ringPositions = new List<Vector3>();
+	private List<Vector3> ringAngles = new List<Vector3>();
+	private int currentCache = 0;
 		
 	// Use this for initialization
 	void Start () {
@@ -61,11 +69,20 @@ public class Move : MonoBehaviour {
 		for(int i = 1; i <= BDNFAmount - 2; i++) {
 			PutOnPath(BDNF, firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.7f, Vector3.up * BDNFHeight);
 		}
-		for(int i = 0; i < rings.Length; i++){
-			rings[i] = (Transform)PutOnPath(tubeRing, i * ringSeparation + 0.00001f, Vector3.zero);
-			rings[i].Rotate(90, 0, 0);
-			ringOffsets[i] = i * ringSeparation;
+		
+		for(float i = ringBeginning; i <= 0.99f; i += ringSeparation){
+			var splinePos = CRSpline.InterpConstantSpeed(thePath.ToArray(), i);
+			ringPositions.Add(splinePos);
+			ringAngles.Add(splinePos - CRSpline.InterpConstantSpeed(thePath.ToArray(), i * 0.99f));
 		}
+		
+		for(int i = 0; i < rings.Length; i++){
+			rings[i] = (Transform)PutOnPathCache(tubeRing, i, Vector3.zero, ringPositions, ringAngles);
+			rings[i].Rotate(90, 0, 0);
+			ringOffsets[i] = i * ringSeparation + ringBeginning;
+			ribosomes[i] = (Transform)PutOnPathCache(ribosome, i, ribosomeDist * new Vector3(Random.value, Random.value, Random.value), ringPositions, ringAngles);
+		}
+		currentCache = rings.Length;
 		//MoveBall();
 	}
 	
@@ -77,6 +94,18 @@ public class Move : MonoBehaviour {
 		}
 		pathCompletion += standingSpeed;
 		MoveBall();
+		if(pathCompletion > ringOffsets[ringToMove] + 0.06f){
+			var previous = (ringToMove - 1 + ringAmount) % ringAmount;
+			var nextOffset = ringOffsets[previous] + ringSeparation;
+			if(currentCache < ringPositions.Count) {
+				SetOnPathCache(rings[ringToMove], currentCache, Vector3.zero, ringPositions, ringAngles);
+				SetOnPathCache(ribosomes[ringToMove], currentCache, ribosomeDist * new Vector3(Random.value, Random.value, Random.value), ringPositions, ringAngles);
+				rings[ringToMove].Rotate(90, 0, 0);
+				ringOffsets[ringToMove] = nextOffset;
+				ringToMove = (ringToMove + 1) % ringAmount;
+				currentCache++;
+			}
+		}
 	}
 	
 	void TorsoMoved(KeyValuePair<int, float> keypair) {
@@ -113,16 +142,6 @@ public class Move : MonoBehaviour {
 			this.transform.parent.transform.localRotation = rotation;
 		}
 		this.transform.parent.transform.position += toMove;
-		if(pathCompletion > ringOffsets[ringToMove] + 0.01f){
-			var previous = (ringToMove - 1 + ringAmount) % ringAmount;
-			var nextOffset = ringOffsets[previous] + ringSeparation;
-			if(nextOffset <= 1.0f) {
-				SetOnPath(rings[ringToMove], nextOffset, Vector3.zero);
-				rings[ringToMove].Rotate(90, 0, 0);
-				ringOffsets[ringToMove] = nextOffset;
-				ringToMove = (ringToMove + 1) % ringAmount;
-			}
-		}
 	}
 	
 	void UpdateJumpThreshold(KeyValuePair<int, float> keypair){
@@ -167,17 +186,30 @@ public class Move : MonoBehaviour {
 	}
 	
 	Object PutOnPath(Transform obj, float pathPercentage, Vector3 offset) {
-		pathPercentage = Mathf.Min( Mathf.Max(0.0f, pathPercentage), 0.99f);
+		pathPercentage = Mathf.Min( Mathf.Max(0.0f, pathPercentage), 0.999f);
 		Quaternion rotation = new Quaternion();
 		rotation.SetLookRotation(CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) - CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage * 0.99f));
 		return Instantiate(obj, CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) + offset, rotation);
 	}
 	
 	void SetOnPath(Transform obj, float pathPercentage, Vector3 offset) {
-		pathPercentage = Mathf.Min( Mathf.Max(0.0f, pathPercentage), 0.99f);
+		pathPercentage = Mathf.Min( Mathf.Max(0.0f, pathPercentage), 0.999f);
 		Quaternion rotation = new Quaternion();
 		rotation.SetLookRotation(CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) - CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage * 0.99f));
 		obj.position = CRSpline.InterpConstantSpeed(thePath.ToArray(), pathPercentage) + offset;
+		obj.rotation = rotation;
+	}
+	
+	Object PutOnPathCache(Transform obj, int index, Vector3 offset, List<Vector3> positions, List<Vector3> angles) {
+		Quaternion rotation = new Quaternion();
+		rotation.SetLookRotation(angles.ElementAt(index));
+		return Instantiate(obj, positions.ElementAt(index) + offset, rotation);
+	}
+	
+	void SetOnPathCache(Transform obj, int index, Vector3 offset, List<Vector3> positions, List<Vector3> angles) {
+		Quaternion rotation = new Quaternion();
+		rotation.SetLookRotation(angles.ElementAt(index));
+		obj.position = positions.ElementAt(index) + offset;
 		obj.rotation = rotation;
 	}
 	

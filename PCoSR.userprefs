@@ -4,13 +4,14 @@
     <Files>
       <File FileName="../Dropbox/DSFinal/facetest/Assets/Scripts/StartMenu.js" Line="24" Column="37" />
       <File FileName="../Dropbox/DSFinal/facetest/Assets/Scripts/MenuObject.cs" Line="13" Column="10" />
-      <File FileName="Assets/Scripts/Move.cs" Line="100" Column="4" />
+      <File FileName="Assets/Scripts/Move.cs" Line="81" Column="30" />
       <File FileName="Assets/Scripts/CollisionLargeBdnf.cs" Line="1" Column="1" />
       <File FileName="Assets/Plugins/TSPS/OpenTSPSUnityListener.cs" Line="1" Column="1" />
       <File FileName="Assets/Plugins/OSC.NET/UnityOSCReceiver.cs" Line="1" Column="1" />
       <File FileName="Assets/Plugins/Internal/UserMovement.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/OSCSender.cs" Line="7" Column="41" />
-      <File FileName="Assets/Plugins/radical/System/Curves.cs" Line="180" Column="27" />
+      <File FileName="Assets/Scripts/OSCSender.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/radical/System/Curves.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/RandomizeColor.cs" Line="8" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
