@@ -18,7 +18,7 @@ public class Move : MonoBehaviour {
 	private IEnumerable<Vector3> thePath;
 	
 	private int BDNFAmount = 10;
-	private float firstBDNFPath = 0.05f;
+	private float firstBDNFPath = 0.1f;
 	private float lastBDNFPath = 0.95f;
 	private float BDNFHeight = 0.0f;
 	
@@ -44,6 +44,9 @@ public class Move : MonoBehaviour {
 	private int currentCache = 0;
 	
 	public GameObject PictureTaker;
+	
+	public GameObject Badge05;
+	private bool fadedB5 = false;
 		
 	// Use this for initialization
 	void Start () {
@@ -111,6 +114,10 @@ public class Move : MonoBehaviour {
 				ringToMove = (ringToMove + 1) % ringAmount;
 				currentCache++;
 			}
+		}
+		if(!fadedB5 && pathCompletion > 0.02f){
+			fadedB5 = true;
+			iTween.FadeTo(Badge05, 0.0f, 1.0f);
 		}
 	}
 	
