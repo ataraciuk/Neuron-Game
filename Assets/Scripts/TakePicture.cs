@@ -12,7 +12,7 @@ public class TakePicture : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		wct = new WebCamTexture(WebCamTexture.devices[0].name);
+		wct = new WebCamTexture(WebCamTexture.devices[0].name, 400, 300);
 		wct.Play();
 	}
 	
@@ -27,7 +27,7 @@ public class TakePicture : MonoBehaviour {
        snap.SetPixels(wct.GetPixels());
        snap.Apply();
 
-       System.IO.File.WriteAllBytes(_SavePath + _CaptureCounter.ToString() + ".png", snap.EncodeToPNG());
+       System.IO.File.WriteAllBytes(_SavePath + _CaptureCounter.ToString() + ".png", snap.EncodeToPNG() );
        ++_CaptureCounter;
     }
 }
