@@ -52,6 +52,7 @@
      <Compile Include="Assets\Scripts\OSCSender.cs" />
      <Compile Include="Assets\Scripts\RandomizeColor.cs" />
      <Compile Include="Assets\Scripts\Rotate.cs" />
+     <Compile Include="Assets\Scripts\TakePicture.cs" />
      <Compile Include="Assets\Scripts\csOpenTSPSListener.cs" />
      <Compile Include="Assets\Scripts\iTween.cs" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />

@@ -20,7 +20,7 @@ public class Move : MonoBehaviour {
 	private int BDNFAmount = 10;
 	private float firstBDNFPath = 0.05f;
 	private float lastBDNFPath = 0.95f;
-	private float BDNFHeight = 8.0f;
+	private float BDNFHeight = 0.0f;
 	
 	private float standingSpeed = 0.0005f;
 	
@@ -42,6 +42,8 @@ public class Move : MonoBehaviour {
 	private List<Vector3> ringPositions = new List<Vector3>();
 	private List<Vector3> ringAngles = new List<Vector3>();
 	private int currentCache = 0;
+	
+	public GameObject PictureTaker;
 		
 	// Use this for initialization
 	void Start () {
@@ -63,11 +65,15 @@ public class Move : MonoBehaviour {
 		path = path.Select(x => x * 0.2f).ToArray();
 		thePath = Interpolate.NewCatmullRom(path, 1000, false);
 		this.transform.parent.transform.position = path[0];
-		PutOnPath(BDNF, firstBDNFPath, Vector3.up * BDNFHeight);
-		PutOnPath(BDNF, lastBDNFPath, Vector3.up * BDNFHeight);
+		Transform theBdnf;
+		theBdnf = (Transform)PutOnPath(BDNF, firstBDNFPath, Vector3.up * BDNFHeight);
+		theBdnf.gameObject.SendMessage("SetPictureTaker", PictureTaker);
+		theBdnf = (Transform)PutOnPath(BDNF, lastBDNFPath, Vector3.up * BDNFHeight);
+		theBdnf.gameObject.SendMessage("SetPictureTaker", PictureTaker);
 		var spread = (lastBDNFPath - firstBDNFPath) / BDNFAmount;
 		for(int i = 1; i <= BDNFAmount - 2; i++) {
-			PutOnPath(BDNF, firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.7f, Vector3.up * BDNFHeight);
+			theBdnf = (Transform)PutOnPath(BDNF, firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.7f, Vector3.up * BDNFHeight);
+			theBdnf.gameObject.SendMessage("SetPictureTaker", PictureTaker);
 		}
 		
 		for(float i = ringBeginning; i <= 0.99f; i += ringSeparation){

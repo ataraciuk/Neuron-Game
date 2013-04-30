@@ -4,6 +4,7 @@ using System.Collections;
 public class CollisionLargeBdnf : MonoBehaviour {
 
 	public Transform Other;
+	private GameObject PictureTaker;
 	
 	// Use this for initialization
 	void Start () {
@@ -16,6 +17,11 @@ public class CollisionLargeBdnf : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter(Collider other) {
+		PictureTaker.SendMessage("TakeSnapshot");
 		Debug.Log("collision with other");
+	}
+	
+	void SetPictureTaker(GameObject pt){
+		PictureTaker = pt;
 	}
 }

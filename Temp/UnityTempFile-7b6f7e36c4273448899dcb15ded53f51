@@ -36,5 +36,8 @@
 'Assets/Scripts/EmotionTrigger.cs'
 'Assets/Scripts/Move.cs'
 'Assets/Scripts/OSCSender.cs'
+'Assets/Scripts/RandomizeColor.cs'
+'Assets/Scripts/Rotate.cs'
+'Assets/Scripts/TakePicture.cs'
 'Assets/Scripts/csOpenTSPSListener.cs'
 'Assets/Scripts/iTween.cs'

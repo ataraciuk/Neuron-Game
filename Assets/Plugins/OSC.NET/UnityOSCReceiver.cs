@@ -50,7 +50,7 @@ public class UnityOSCReceiver : MonoBehaviour {
 //			print("connecting.");
 			connected = true;
 			receiver = new OSCReceiver(port, sendPort);
-			Debug.Log(port);
+			//Debug.Log(port);
 			thread = new Thread(new ThreadStart(listen));
 			thread.Start();
 			//sendThread = new Thread(new ThreadStart(send));
