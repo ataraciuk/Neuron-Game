@@ -17,6 +17,8 @@ public class TakePicture : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		Debug.Log(WebCamTexture.devices.Length);
+		Debug.Log(WebCamTexture.devices[0].name);
 		wct = new WebCamTexture(WebCamTexture.devices[0].name, xSize, ySize);
 		wct.Play();
 	}

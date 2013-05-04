@@ -82,6 +82,10 @@ public class UnityOSCReceiver : MonoBehaviour {
 		disconnect();
 	}
 	
+	public void OnDestroy(){
+		disconnect();
+	}
+	
 	public void disconnect() {
       	if (receiver!=null){
 //		print("disconnecting.");

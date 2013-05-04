@@ -20,7 +20,7 @@ public class Move : MonoBehaviour {
 	private int BDNFAmount = 10;
 	private float firstBDNFPath = 0.1f;
 	private float lastBDNFPath = 0.95f;
-	private float BDNFHeight = 0.0f;
+	private float BDNFHeight = 8.0f;
 	
 	private float standingSpeed = 0.0005f;
 	
@@ -101,8 +101,8 @@ public class Move : MonoBehaviour {
 			jumping = false;
 			endedJump = false;
 		}
-		pathCompletion += standingSpeed;
-		MoveBall();
+		//pathCompletion += standingSpeed;
+		//MoveBall();
 		if(pathCompletion > ringOffsets[ringToMove] + 0.06f){
 			var previous = (ringToMove - 1 + ringAmount) % ringAmount;
 			var nextOffset = ringOffsets[previous] + ringSeparation;
@@ -130,6 +130,7 @@ public class Move : MonoBehaviour {
 		}
 		//this.transform.position += new Vector3(0, val * torsoYMultiplier, 0);
 	}
+	
 	void HipsMoved(KeyValuePair<int, float> keypair) {
 		var user = NewOrGet(keypair.Key);
 		if(!jumping) {
