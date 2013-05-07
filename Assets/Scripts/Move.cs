@@ -20,7 +20,7 @@ public class Move : MonoBehaviour {
 	private int BDNFAmount = 10;
 	private float firstBDNFPath = 0.1f;
 	private float lastBDNFPath = 0.95f;
-	private float BDNFHeight = 8.0f;
+	private float BDNFHeight = 12.0f;
 	
 	private float standingSpeed = 0.0005f;
 	
@@ -47,6 +47,8 @@ public class Move : MonoBehaviour {
 	
 	public GameObject Badge05;
 	private bool fadedB5 = false;
+	
+	private bool playedStartSound = false;
 		
 	// Use this for initialization
 	void Start () {
@@ -142,6 +144,10 @@ public class Move : MonoBehaviour {
 			user.velocities.Add(val);
 		}
 		float mappedSpeed = Mathf.Log(1+ (user.speeds.Average() - Mathf.Abs(user.velocities.Average())));
+		if(mappedSpeed * hipsZMultiplier > 0.0f && !playedStartSound){
+			playedStartSound = true;
+			this.audio.Play();
+		}
 		this.pathCompletion += mappedSpeed * hipsZMultiplier;
 		pathCompletion = Mathf.Min(pathCompletion, 1.0f);
 		//iTween.PutOnPath(this.gameObject, thePath.ToArray(), pathCompletion); //TODO Cache this
