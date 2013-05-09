@@ -20,7 +20,7 @@ public class Move : MonoBehaviour {
 	private int BDNFAmount = 10;
 	private float firstBDNFPath = 0.1f;
 	private float lastBDNFPath = 0.95f;
-	private float BDNFHeight = 12.0f;
+	private float BDNFHeight = 0.0f;//12.0f;
 	
 	private float standingSpeed = 0.0005f;
 	
@@ -47,8 +47,6 @@ public class Move : MonoBehaviour {
 	
 	public GameObject Badge05;
 	private bool fadedB5 = false;
-	
-	private bool playedStartSound = false;
 		
 	// Use this for initialization
 	void Start () {
@@ -103,8 +101,8 @@ public class Move : MonoBehaviour {
 			jumping = false;
 			endedJump = false;
 		}
-		//pathCompletion += standingSpeed;
-		//MoveBall();
+		pathCompletion += standingSpeed;
+		MoveBall();
 		if(pathCompletion > ringOffsets[ringToMove] + 0.06f){
 			var previous = (ringToMove - 1 + ringAmount) % ringAmount;
 			var nextOffset = ringOffsets[previous] + ringSeparation;
@@ -144,8 +142,7 @@ public class Move : MonoBehaviour {
 			user.velocities.Add(val);
 		}
 		float mappedSpeed = Mathf.Log(1+ (user.speeds.Average() - Mathf.Abs(user.velocities.Average())));
-		if(mappedSpeed * hipsZMultiplier > 0.0f && !playedStartSound){
-			playedStartSound = true;
+		if(mappedSpeed * hipsZMultiplier > 0.0f && !this.audio.isPlaying){
 			this.audio.Play();
 		}
 		this.pathCompletion += mappedSpeed * hipsZMultiplier;
