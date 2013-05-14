@@ -51,7 +51,9 @@
      <Compile Include="Assets\Scripts\EmotionTrigger.cs" />
      <Compile Include="Assets\Scripts\Move.cs" />
      <Compile Include="Assets\Scripts\OSCSender.cs" />
+     <Compile Include="Assets\Scripts\PlayIntro.cs" />
      <Compile Include="Assets\Scripts\PlayMovie.cs" />
+     <Compile Include="Assets\Scripts\PlayWin.cs" />
      <Compile Include="Assets\Scripts\RandomizeColor.cs" />
      <Compile Include="Assets\Scripts\Rotate.cs" />
      <Compile Include="Assets\Scripts\TakePicture.cs" />

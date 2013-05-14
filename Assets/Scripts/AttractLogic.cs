@@ -25,6 +25,7 @@ public class AttractLogic : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(timeToEnd > 0 && Time.fixedTime > timeToEnd + 4.0f) {
+			timeToEnd = -1.0f;
 			Application.LoadLevel(1);
 		}
 	}

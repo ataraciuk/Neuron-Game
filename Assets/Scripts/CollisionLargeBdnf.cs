@@ -7,6 +7,7 @@ public class CollisionLargeBdnf : MonoBehaviour {
 
 	public Transform Other;
 	private GameObject PictureTaker;
+	private GameObject MessageCaught;
 	private bool collided = false;
 	
 	// Use this for initialization
@@ -26,11 +27,22 @@ public class CollisionLargeBdnf : MonoBehaviour {
 			this.GetComponentsInChildren<Renderer>().ToList().ForEach(delegate(Renderer r){
 				r.enabled = false;
 			});
+			this.MessageCaught.SetActive(true);
+			iTween.FadeTo(this.MessageCaught, 1.0f, 0.1f);
+			iTween.FadeTo(this.MessageCaught, iTween.Hash(
+				"alpha", 0.0f,
+				"time", 0.4f,
+				"delay", 2.0f
+			));
 			collided = true;
 		}
 	}
 	
 	void SetPictureTaker(GameObject pt){
 		PictureTaker = pt;
+	}
+	
+	void SetMessageCaught(GameObject m) {
+		MessageCaught = m;
 	}
 }

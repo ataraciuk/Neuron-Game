@@ -20,7 +20,7 @@ public class Move : MonoBehaviour {
 	private int BDNFAmount = 10;
 	private float firstBDNFPath = 0.1f;
 	private float lastBDNFPath = 0.95f;
-	private float BDNFHeight = 0.0f;//12.0f;
+	private float BDNFHeight = 11.0f;
 	
 	private float standingSpeed = 0.0005f;
 	
@@ -47,6 +47,8 @@ public class Move : MonoBehaviour {
 	
 	public GameObject Badge05;
 	private bool fadedB5 = false;
+	
+	public GameObject Badge09;
 		
 	// Use this for initialization
 	void Start () {
@@ -71,12 +73,15 @@ public class Move : MonoBehaviour {
 		Transform theBdnf;
 		theBdnf = (Transform)PutOnPath(BDNF, firstBDNFPath, Vector3.up * BDNFHeight);
 		theBdnf.gameObject.SendMessage("SetPictureTaker", PictureTaker);
+		theBdnf.gameObject.SendMessage("SetMessageCaught", Badge09);
 		theBdnf = (Transform)PutOnPath(BDNF, lastBDNFPath, Vector3.up * BDNFHeight);
 		theBdnf.gameObject.SendMessage("SetPictureTaker", PictureTaker);
+		theBdnf.gameObject.SendMessage("SetMessageCaught", Badge09);
 		var spread = (lastBDNFPath - firstBDNFPath) / BDNFAmount;
 		for(int i = 1; i <= BDNFAmount - 2; i++) {
 			theBdnf = (Transform)PutOnPath(BDNF, firstBDNFPath + spread * i + (Random.value - 0.5f) * spread * 0.7f, Vector3.up * BDNFHeight);
 			theBdnf.gameObject.SendMessage("SetPictureTaker", PictureTaker);
+			theBdnf.gameObject.SendMessage("SetMessageCaught", Badge09);
 		}
 		
 		for(float i = ringBeginning; i <= 0.99f; i += ringSeparation){
@@ -101,8 +106,8 @@ public class Move : MonoBehaviour {
 			jumping = false;
 			endedJump = false;
 		}
-		pathCompletion += standingSpeed;
-		MoveBall();
+		//pathCompletion += standingSpeed;
+		//MoveBall();
 		if(pathCompletion > ringOffsets[ringToMove] + 0.06f){
 			var previous = (ringToMove - 1 + ringAmount) % ringAmount;
 			var nextOffset = ringOffsets[previous] + ringSeparation;
@@ -152,13 +157,21 @@ public class Move : MonoBehaviour {
 	}
 	
 	void MoveBall() {
-		var toMove = CRSpline.InterpConstantSpeed(thePath.ToArray(), pathCompletion) - this.transform.parent.transform.position;
-		Quaternion rotation = new Quaternion();
-		if(toMove.magnitude > 0.0f) {
-			rotation.SetLookRotation(toMove);
-			this.transform.parent.transform.localRotation = rotation;
+		if(pathCompletion < 1.0f) {
+			var toMove = CRSpline.InterpConstantSpeed(thePath.ToArray(), pathCompletion) - this.transform.parent.transform.position;
+			Quaternion rotation = new Quaternion();
+			if(toMove.magnitude > 0.0f) {
+				rotation.SetLookRotation(toMove);
+				this.transform.parent.transform.localRotation = rotation;
+			}
+			this.transform.parent.transform.position += toMove;
+		} else {
+			TriggerEnd();
 		}
-		this.transform.parent.transform.position += toMove;
+	}
+	
+	void TriggerEnd() {
+		Application.LoadLevel(3);
 	}
 	
 	void UpdateJumpThreshold(KeyValuePair<int, float> keypair){
