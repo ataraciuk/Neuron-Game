@@ -49,6 +49,8 @@ public class Move : MonoBehaviour {
 	private bool fadedB5 = false;
 	
 	public GameObject Badge09;
+	
+	private float previousSpeed = 0.0f;
 		
 	// Use this for initialization
 	void Start () {
@@ -147,10 +149,11 @@ public class Move : MonoBehaviour {
 			user.velocities.Add(val);
 		}
 		float mappedSpeed = Mathf.Log(1+ (user.speeds.Average() - Mathf.Abs(user.velocities.Average())));
-		if(mappedSpeed * hipsZMultiplier > 0.0f && !this.audio.isPlaying){
+		if(previousSpeed > 0.0f && mappedSpeed * hipsZMultiplier > 0.0f && !this.audio.isPlaying){
 			this.audio.Play();
 		}
 		this.pathCompletion += mappedSpeed * hipsZMultiplier;
+		previousSpeed = mappedSpeed * hipsZMultiplier;
 		pathCompletion = Mathf.Min(pathCompletion, 1.0f);
 		//iTween.PutOnPath(this.gameObject, thePath.ToArray(), pathCompletion); //TODO Cache this
 		MoveBall();
