@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\CollisionLargeBdnf.cs" />
      <Compile Include="Assets\Scripts\CollisionSmallBdnf1.cs" />
      <Compile Include="Assets\Scripts\EmotionTrigger.cs" />
+     <Compile Include="Assets\Scripts\IntroLogic.cs" />
      <Compile Include="Assets\Scripts\Move.cs" />
      <Compile Include="Assets\Scripts\OSCSender.cs" />
      <Compile Include="Assets\Scripts\PlayIntro.cs" />
