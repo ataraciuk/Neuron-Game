@@ -46,6 +46,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\AllScenesManager.cs" />
      <Compile Include="Assets\Scripts\AttractLogic.cs" />
+     <Compile Include="Assets\Scripts\CameraRotation.cs" />
      <Compile Include="Assets\Scripts\CollisionInhib.cs" />
      <Compile Include="Assets\Scripts\CollisionLargeBdnf.cs" />
      <Compile Include="Assets\Scripts\CollisionSmallBdnf1.cs" />
@@ -65,6 +66,7 @@
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
      <None Include="Assets\Shaders\Fx\Additive.shader" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
+     <None Include="Assets\Shaders\Skybox Shader.shader" />
      <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
  <Reference Include="Library\ScriptAssemblies\Assembly-UnityScript-firstpass">

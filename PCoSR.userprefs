@@ -1,6 +1,24 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Shaders/Skybox Shader.shader">
+    <Files>
+      <File FileName="Assets/Plugins/TSPS/OpenTSPSUnityListener.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/Internal/UserMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/OSC.NET/UnityOSCReceiver.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/radical/System/Curves.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/AttractLogic.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Move.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/CollisionLargeBdnf.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/TakePicture.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlayMovie.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlayIntro.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlayWin.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/AllScenesManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/IntroLogic.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/ActiveGameOBJECT.js" Line="1" Column="1" />
+      <File FileName="Assets/Shaders/Skybox Shader.shader" Line="67" Column="2" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
