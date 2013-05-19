@@ -22,7 +22,11 @@ public class TakePicture : MonoBehaviour {
 	void Start () {
 		Debug.Log(WebCamTexture.devices.Length);
 		Debug.Log(WebCamTexture.devices[0].name);
-		dropbox = System.IO.File.ReadAllLines(Application.dataPath + "/dropboxpath.txt" )[0];
+		try {
+			dropbox = System.IO.File.ReadAllLines("dropboxpath.txt")[0];
+		} catch {
+			Application.LoadLevel(0);
+		}
 		wct = new WebCamTexture(WebCamTexture.devices[0].name, xSize, ySize);
 		wct.Play();
 		string ln = System.IO.File.ReadAllLines(dropbox + jsname)[0];
