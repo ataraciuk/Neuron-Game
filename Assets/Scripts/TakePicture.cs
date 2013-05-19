@@ -14,7 +14,7 @@ public class TakePicture : MonoBehaviour {
 	private const int ySize = 300;
 	private const float xTumb = 80.0f;
 	private const float yTumb = (float) ySize * xTumb / (float) xSize;
-	private const string dropbox = "/Users/ataraciuk/Dropbox/Public/neuron-test/";
+	private string dropbox;
 	private const string jsname = "js/lastImage.js";
 	private int lastImage;
 	
@@ -22,6 +22,7 @@ public class TakePicture : MonoBehaviour {
 	void Start () {
 		Debug.Log(WebCamTexture.devices.Length);
 		Debug.Log(WebCamTexture.devices[0].name);
+		dropbox = System.IO.File.ReadAllLines(Application.dataPath + "/dropboxpath.txt" )[0];
 		wct = new WebCamTexture(WebCamTexture.devices[0].name, xSize, ySize);
 		wct.Play();
 		string ln = System.IO.File.ReadAllLines(dropbox + jsname)[0];
