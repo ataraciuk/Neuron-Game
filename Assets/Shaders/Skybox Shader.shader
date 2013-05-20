@@ -41,12 +41,16 @@ Shader "Custom/Skybox Shader" {
 			#ifdef FRAGMENT
 			void main()
 			{		
-				float time = _Time.y/10.0;
+				float time = _Time.y/2.0;
 				vec4 rads = vec4(radians(Rotation.xyzw));
-				vec2 angleoffset = vec2(cos(Pi/4.0-rads.y),sin(rads.x));
-				vec2 p=vec2(2.0*gl_FragCoord.xy-resolution)/max(resolution.x,resolution.y) + angleoffset;
+				float d = distance(gl_FragCoord.xy, vec2(700.0,400.0));
+				float distFactor = pow(d*0.0005,2.0)*1.5;
 				
-				for(int i=1;i<40;i++)
+				vec2 dist = gl_FragCoord.xy*(1.0- pow(d*0.0006, 2.0));
+				vec2 angleoffset = vec2(cos(Pi/4.0-rads.y)*2.0,sin(rads.x));
+				vec2 p=vec2(2.0*dist.xy-resolution)/max(resolution.x,resolution.y) + angleoffset;
+				
+				for (int i = 1; i < 40; i++)
 				{
 					vec2 newp=p;
 					newp.x+=(0.6/float(i)) * sin(float(i) * p.y + time +0.8*float(i)   ) + 20.;		
@@ -55,7 +59,8 @@ Shader "Custom/Skybox Shader" {
 				}
 //				p += vec2(cos(rads.x) , sin(rads.y));
 				vec3 col = vec3(0.5*sin(3.0*p.x)+0.5,0.5*sin(3.0*p.y)+0.5,sin(p.x+p.y));
-				col=sqrt(blend3(col,0.25));
+				col=sqrt((blend3(col, 0.1+ distFactor*2.)));
+				col -= (1.,1.,1.,1.)*distFactor;
 				gl_FragColor=vec4(col, 1.0);
 			}
 		  #endif

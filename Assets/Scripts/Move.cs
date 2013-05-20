@@ -108,8 +108,8 @@ public class Move : MonoBehaviour {
 			jumping = false;
 			endedJump = false;
 		}
-		pathCompletion += standingSpeed;
-		MoveBall();
+		//pathCompletion += standingSpeed;
+		//MoveBall();
 		if(pathCompletion > ringOffsets[ringToMove] + 0.06f){
 			var previous = (ringToMove - 1 + ringAmount) % ringAmount;
 			var nextOffset = ringOffsets[previous] + ringSeparation;

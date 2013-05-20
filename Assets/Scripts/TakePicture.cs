@@ -27,6 +27,7 @@ public class TakePicture : MonoBehaviour {
 		} catch {
 			Application.LoadLevel(0);
 		}
+		System.IO.File.WriteAllText(dropbox+"log.txt", "device name: "+WebCamTexture.devices[0].name);
 		wct = new WebCamTexture(WebCamTexture.devices[0].name, xSize, ySize);
 		wct.Play();
 		string ln = System.IO.File.ReadAllLines(dropbox + jsname)[0];
